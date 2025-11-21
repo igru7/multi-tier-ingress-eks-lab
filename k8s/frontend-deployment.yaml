@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend-irene
-          image: irene53179/lab-frontend:1.0
+          image: irene53179/lab-frontend:latest
           ports:
             - containerPort: 80
           readinessProbe:

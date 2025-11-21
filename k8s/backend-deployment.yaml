@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend-irene
-          image: irene53179/lab-backend:1.0
+          image: irene53179/lab-backend:latest
           ports:
             - containerPort: 3000
           readinessProbe:
