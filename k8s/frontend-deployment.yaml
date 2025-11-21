@@ -15,7 +15,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - name: frontend-irene
+        - name: frontend
           image: irene53179/lab-frontend:latest
           ports:
             - containerPort: 80
