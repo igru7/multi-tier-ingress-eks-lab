@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: irene-2tier-ingress
+  namespace: irene-2tier
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: "nginx"
+  rules:
+    # Route for backend-site
+    - host: "backend.app.irene.diogohack.shop"
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3000
+
+    # Route for frontend-site
+    - host: "frontend.app.irene.diogohack.shop"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

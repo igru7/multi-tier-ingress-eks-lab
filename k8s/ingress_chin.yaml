@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chinmayee-ingress
+  namespace: chinmayee
+  annotations:
+    kubernetes.io/ingress.class: chinmayee-nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: "chinmayee-nginx"
+  rules:
+  - host: vote.app.chin.diogohack.shop
+    http:
+      paths:
+      - path: /vote
+        pathType: Prefix
+        backend:
+          service:
+            name: chinmayee-svc-vote
+            port:
+              number: 80
+  - host: result.app.chin.diogohack.shop
+    http:
+      paths:
+      - path: /result
+        pathType: Prefix
+        backend:
+          service:
+            name: chinmayee-svc-result
+            port:
+              number: 80

@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress-irene
+  namespace: demo-irene
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.org/rewrite-target: /
+    nginx.org/proxy-read-timeout: "60s"
+    nginx.org/proxy-send-timeout: "60s"
+    nginx.org/client-max-body-size: 10m
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "app.irene.diogohack.shop"
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

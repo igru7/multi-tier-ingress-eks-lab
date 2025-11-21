@@ -1,0 +1,166 @@
+#set current Namespace context
+kubectl config set-context --current --namespace=staging
+
+#Switching between Namespaces, not really switching,
+# just selecting another name space 
+kubectl get pods --namespace=productionkubectl get pods --namespace=production
+
+
+#Use labels on Namespaces to apply policies, monitoring, or other configurations dynamically.
+
+kubectl label namespace staging environment=staging
+
+#Namespaces can have Finalizers to perform cleanup tasks before deletion. This ensures that resources within a Namespace are properly cleaned up.
+
+metadata:
+  name: team-alpha
+  finalizers:
+    - kubernetes
+
+
+#Verify cluster context
+#=> is used to verify which Kubernetes cluster your kubectl command is currently targeting.
+# prints the kubeconfig file (which keeps active EKS if it exists
+kubectl config current-context
+
+
+
+kubectl create namespace deploy-lab
+kubectl config set-context --current --namespace=deploy-lab
+
+kubectl config view --minify | grep namespace:
+
+kubectl get deployments
+kubectl get nodes
+kubectl get pods
+# with label selector 
+kubectl get pods -l app=nginx 
+
+kubectl describe deployment nginx-deployment
+kubectl describe pod nginx-deployment-86c8bb7d4c-abc12
+kubectl logs <pod-name>
+kubectl exec -it nginx-deployment-86c8bb7d4c-abc12 -- /bin/sh
+
+#inside the nginx pod:
+# Check the default web root
+ls /usr/share/nginx/html
+cat /usr/share/nginx/html/index.html
+# Confirm the nginx process
+ps aux | grep nginx
+# Check environment and DNS
+cat /etc/resolv.conf
+nslookup kubernetes.default
+ 
+exit
+
+
+# View rollout history
+
+kubectl rollout history deployment/nginx-deployment
+
+
+# Roll back to revision 2 (or 1)
+kubectl rollout undo deployment/nginx-deployment --to-revision=2 
+
+# If you omit -to-revision, Kubernetes will roll back to the previous revision automatically.
+Example:
+
+kubectl rollout undo deployment/nginx-deployment
+
+# Check rollout status:
+
+kubectl rollout status deployment/nginx-deployment
+
+#Additional Debugging Tips
+#Check Pod Events:
+
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+
+#This shows recent cluster events you may need to interpret errors.
+
+#View Container Logs Continuously (if container restarts):
+
+kubectl logs -f <pod-name> --container=<container-name>
+
+
+# Describe Node Status:
+
+# If Pods never schedule, check node status:
+
+kubectl describe node <node-name>
+
+
+# Look for resource pressure or taints preventing scheduling.
+
+#Use kubectl exec to Test Commands, when inside a Pod:
+
+# Check networking:
+ping -c 3 8.8.8.8
+nslookup kubernetes.default
+# Inspect file system:
+ls /etc
+cat /etc/os-release
+
+
+#Delete Stuck Pods:
+
+#If a Pod is in a stuck state (Terminating, CrashLoopBackOff, etc.), you can forcibly delete it:
+
+kubectl delete pod <pod-name> --grace-period=0 --force
+
+
+#List Container Images on a Node (for advanced debugging):
+
+#If you have SSH access to a node, you can run:
+
+ctr -n k8s.io images ls   # for containerd
+docker images            # if using Docker runtime
+
+
+#Lab environment Setup with namespaces
+kubectl config current-context
+kubectl get nodes
+
+
+#Ensure that at least one node is “Ready”.
+
+#Optionally create a dedicated namespace (recommended to isolate lab resources)
+
+
+kubectl create namespace svc-lab
+kubectl config set-context --current --namespace=svc-lab
+
+
+#Verify you are in the correct namespace:
+
+
+kubectl config view --minify | grep namespace:
+
+#service
+kubectl get svc
+
+#get desciption one selected service
+kubectl describe service nginx-service
+
+#under selector app=nginx
+#under Endpoint the Pod IP and PORT!!!!!
+
+#Get Service details incl ip and port
+
+
+kubectl get svc nginx-service -o wide 
+
+
+kubectl config get-contexts
+kubectl config current-context
+
+aws configure
+
+aws configure list 
+
+#set current Namespace context
+kubectl config set-context --current --namespace=staging
+
+#Verify you are in the correct namespace:
+kubectl config view --minify | grep namespace:
