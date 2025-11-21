@@ -93,10 +93,19 @@ jobs:
       - name: Update kubeconfig for EKS
         run: |
           aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER_NAME"
+          
+      - name: Update kubeconfig for EKS
+        id: kubeconfig
+        run: |
+          echo "Updating kubeconfig for cluster $EKS_CLUSTER_NAME in region $AWS_REGION"
+          OUTPUT=$(aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER_NAME")
+          echo "---- kubeconfig output ----"
+          echo "$OUTPUT"
+          echo "---- end of output ----"
 
       - name: Verify access
         run: |
-          kubectl version --short
+          kubectl version
           kubectl get ns
           kubectl get ingress -A || true
 
