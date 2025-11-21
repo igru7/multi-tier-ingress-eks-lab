@@ -136,21 +136,6 @@ jobs:
           kubectl -n "$K8S_NAMESPACE" set image deployment/backend backend="${{ steps.tag.outputs.backend_image }}"
           kubectl -n "$K8S_NAMESPACE" set image deployment/frontend frontend="${{ steps.tag.outputs.frontend_image }}"
 
-      # Make sure the ingress host matches your Route 53 record (idempotent patch)
-      - name: Patch Ingress host if needed
-        shell: bash
-        run: |
-          # Reads, checks, and patches host in-place.
-          CURRENT_HOST=$(kubectl -n "$K8S_NAMESPACE" get ingress -o jsonpath='{.items[0].spec.rules[0].host}')
-          if [ "$CURRENT_HOST" != "$INGRESS_HOST" ]; then
-            echo "Patching ingress host to $INGRESS_HOST"
-            kubectl -n "$K8S_NAMESPACE" patch ingress $(kubectl -n "$K8S_NAMESPACE" get ingress -o jsonpath='{.items[0].metadata.name}') \
-              --type='json' \
-              -p="[ {\"op\": \"replace\", \"path\": \"/spec/rules/0/host\", \"value\": \"${INGRESS_HOST}\" } ]"
-          else
-            echo "Ingress already points to $INGRESS_HOST"
-          fi
-
       - name: Wait for rollout (backend)
         run: |
           kubectl -n "$K8S_NAMESPACE" rollout status deploy/backend --timeout=120s
